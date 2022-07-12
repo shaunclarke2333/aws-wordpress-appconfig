@@ -30,7 +30,7 @@ sudo wget https://wordpress.org/latest.tar.gz;
 sudo tar -xzf latest.tar.gz;
 
 #Copy wp-config file to wordpress folder
-sudo cp wp-config.php /wordpress/;
+sudo cp aws-wordpress-appconfig/wp-config.php wordpress/;
 
 # changing to wordpress dir
 cd /wordpress/;
