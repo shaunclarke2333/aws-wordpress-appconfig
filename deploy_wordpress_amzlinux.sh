@@ -3,9 +3,9 @@
 # using a function so that commands will work when executed in sub shell
 function deploy_wordpress() {
 
-export AWS_DEFAULT_REGION=us-east-1
+export AWS_DEFAULT_REGION=us-east-1;
 
-sudo yum install -y jq
+sudo yum install -y jq;
 
 password=$(aws secretsmanager get-secret-value --secret-id main-rds-password --query 'SecretString' --output text | jq .password | tr -d '"')
 
@@ -29,26 +29,29 @@ sudo wget https://wordpress.org/latest.tar.gz;
 # unzipping wordpress setup files
 sudo tar -xzf latest.tar.gz;
 
-#Copy wp-config file to wordpress folder
-sudo cp aws-wordpress-appconfig/wp-config.php wordpress/;
-
-# changing to wordpress dir
-cd /wordpress/;
+# changing to aws-wordpress-directory
+cd /aws-wordpress-appconfig/;
 
 # passing database name to config file
-sudo sed -i "s/database_name_here/${database_name}/g" wp-config.php,
+sudo sed -i "s/database_name_here/${database_name}/g" wp-config.php;
 
 # passing username to config file
-sudo sed -i "s/username_here/${username}/g" wp-config.php,
+sudo sed -i "s/username_here/${username}/g" wp-config.php;
 
 # passing password to config file
-sudo sed -i "s/password_here/${password}/g" wp-config.php,
+sudo sed -i "s/password_here/${password}/g" wp-config.php;
 
 # passing endpoint to config file
-sudo sed -i "s/localhost/db_host/g" wp-config.php,
+sudo sed -i "s/localhost/db_host/g" wp-config.php;
 
 # passing unique_keys_salts to config file
-sudo sed -i "s/unique_keys_salts/${unique_keys_salts}/g" wp-config.php,
+sudo sed -i "s/unique_keys_salts/${unique_keys_salts}/g" wp-config.php;
+
+#Copy wp-config file to wordpress folder
+sudo cp wp-config.php /wordpress/;
+
+# changing to wordpress dir
+cd ../wordpress/;
 
 # installing wordpress dependcies 
 sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2;
