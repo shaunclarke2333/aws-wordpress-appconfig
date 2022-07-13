@@ -3,32 +3,46 @@
 # using a function so that commands will work when executed in sub shell
 function deploy_wordpress() {
 
+# aws region environment variable for aws cli
 export AWS_DEFAULT_REGION=us-east-1;
 
+# installing jq to parse json output returned from aws cli queries
 sudo yum install -y jq;
 
+# Getting rds password from secrets manager and assigning to password variable
 password=$(aws secretsmanager get-secret-value --secret-id main-rds-password --query 'SecretString' --output text | jq .password | tr -d '"')
 
+# Getting rds username from rds instance and assigning to username variable
 username=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .MasterUsername | tr -d '"')
 
+# Getting rds database name from rds instance and assigning to database_name variable
 database_name=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .DBName | tr -d '"')
 
+# Getting rds endpoint from db instance and assigning to password variable
 db_host=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .Endpoint.Address | tr -d '"')
 
+# Getting wordpress keys and salts auth_key from secrets manager and assigning to variable
 auth_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .authkey | tr -d '"')
 
+# Getting wordpress keys and salts secure suth key from secrets manager and assigning to variable
 secure_auth_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .secureauthkey | tr -d '"')
 
+# Getting wordpress keys and salts logged in key from secrets manager and assigning to variable
 logged_in_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .loggedinkey | tr -d '"')
 
+# Getting wordpress keys and salts nonce key from secrets manager and assigning to variable
 nonce_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .noncekey | tr -d '"')
 
+# Getting wordpress keys and salts auth_salt from secrets manager and assigning to variable
 auth_salt=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .authsalt | tr -d '"')
 
+# Getting wordpress keys and salts secure auth salts from secrets manager and assigning to variable
 secure_auth_salt=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .secureauthsalt | tr -d '"')
 
+# Getting wordpress keys and salts logged in salts from secrets manager and assigning to variable
 logged_in_salt=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .loggedinsalt | tr -d '"')
 
+# Getting wordpress keys and salts nonc salt from secrets manager and assigning to variable
 nonce_salt=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .noncesalt | tr -d '"')
 
 # installing apache
@@ -84,4 +98,5 @@ sudo cp -r * /var/www/html/;
 sudo service httpd restart;
 }
 
+# calling funcrion
 deploy_wordpress
