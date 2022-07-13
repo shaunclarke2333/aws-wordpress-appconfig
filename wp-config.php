@@ -53,7 +53,14 @@ if (strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false)
  * @since 2.6.0
  */
  
-unique_keys_salts
+auth_key
+key_secure
+logged_in_key
+nonce_key
+auth_salt
+salt_secure
+logged_in_salt
+nonce_salt
 
 
 /**#@-*/
