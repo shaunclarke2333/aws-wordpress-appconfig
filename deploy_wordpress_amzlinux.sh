@@ -120,6 +120,8 @@ wp-admin_password=$(aws secretsmanager get-secret-value --secret-id wp-admin-pas
 wp core install --url="wordpress.shaunsawslab.link" --title="Shauns terraform automated deployment" --admin_user="${wp-admin_name}" \
 --admin_password="${wp-admin_password}" --admin_email="shaunclarke43@gmail.com"
 
+# restarting apache web server
+sudo service httpd restart;
 }
 
 # calling funcrion
