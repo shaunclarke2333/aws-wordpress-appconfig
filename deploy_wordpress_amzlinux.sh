@@ -46,8 +46,6 @@ sudo tar -xzf latest.tar.gz;
 # changing to aws-wordpress-directory
 cd aws-wordpress-appconfig/;
 
-touch dr.txt;
-
 # passing database name to config file
 sudo sed -i "s/database_name_here/${database_name}/g" wp-config.php;
 
