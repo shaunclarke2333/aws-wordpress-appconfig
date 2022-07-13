@@ -15,7 +15,21 @@ database_name=$(aws rds describe-db-instances --db-instance-identifier wordpress
 
 db_host=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .Endpoint.Address | tr -d '"')
 
-unique_keys_salts=$(aws secretsmanager get-secret-value --secret-id keys-salts --query 'SecretString' --output text)
+auth_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .authkey | tr -d '"')
+
+secure_auth_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .secureauthkey | tr -d '"')
+
+logged_in_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .loggedinkey | tr -d '"')
+
+nonce_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .noncekey | tr -d '"')
+
+auth_salt=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .authsalt | tr -d '"')
+
+secure_auth_salt=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .secureauthsalt | tr -d '"')
+
+logged_in_salt=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .loggedinsalt | tr -d '"')
+
+nonce_salt=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .noncesalt | tr -d '"')
 
 # installing apache
 sudo yum install -y httpd;
@@ -32,20 +46,29 @@ sudo tar -xzf latest.tar.gz;
 # changing to aws-wordpress-directory
 cd /aws-wordpress-appconfig/;
 
+touch dr.txt;
+
 # passing database name to config file
-sudo sed -i "s/database_name_here/${database_name}/g" wp-config.php;
+sudo sed -i "s/database_name_here/${database_name}/g" aws-wordpress-appconfig/wp-config.php;
 
 # passing username to config file
-sudo sed -i "s/username_here/${username}/g" wp-config.php;
+sudo sed -i "s/username_here/${username}/g" aws-wordpress-appconfig/wp-config.php;
 
 # passing password to config file
-sudo sed -i "s/password_here/${password}/g" wp-config.php;
+sudo sed -i "s/password_here/${password}/g" aws-wordpress-appconfig/wp-config.php;
 
 # passing endpoint to config file
-sudo sed -i "s/localhost/db_host/g" wp-config.php;
+sudo sed -i "s/localhost/${db_host}/g" aws-wordpress-appconfig/wp-config.php;
 
 # passing unique_keys_salts to config file
-sudo sed -i "s/unique_keys_salts/${unique_keys_salts}/g" wp-config.php;
+sudo sed -i "s/auth_key/${auth_key}/" aws-wordpress-appconfig/wp-config.php;
+sudo sed -i "s/key_secure/${secure_auth_key}/" aws-wordpress-appconfig/wp-config.php;
+sudo sed -i "s:logged_in_key:${logged_in_key}:" aws-wordpress-appconfig/wp-config.php;
+sudo sed -i "s%nonce_key%${nonce_key}%" aws-wordpress-appconfig/wp-config.php;
+sudo sed -i "s/auth_salt/${auth_salt}/" aws-wordpress-appconfig/wp-config.php;
+sudo sed -i "s/salt_secure/${secure_auth_salt}/" aws-wordpress-appconfig/wp-config.php;
+sudo sed -i "s:logged_in_salt:${logged_in_salt}:" aws-wordpress-appconfig/wp-config.php;
+sudo sed -i "s/nonce_salt/${nonce_salt}/" aws-wordpress-appconfig/wp-config.php;
 
 #Copy wp-config file to wordpress folder
 sudo cp wp-config.php /wordpress/;
