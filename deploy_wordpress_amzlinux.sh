@@ -96,6 +96,32 @@ sudo cp -r * /var/www/html/;
 
 # restarting apache web server
 sudo service httpd restart;
+
+# changing to opt directory
+cd ../opt;
+
+# download wordpress cli installer
+sudo curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar;
+
+# changing permissions to make file executable
+sudo chmod +x wp-cli.phar;
+
+# moving file to /usr/local/bin/wp
+sudo mv wp-cli.phar /usr/local/bin/wp;
+
+# changing to wordpress directory
+cd ../wordpress;
+
+#Getting wordpress admin username and password from secrets manager
+wp-admin_name=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .name | tr -d '"')
+wp-admin_password=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .password | tr -d '"')
+
+# Using wordpress CLI command to install wordpress and complete setup
+wp core install --url="wordpress.shaunsawslab.link" --title="Shauns terraform automated deployment" --admin_user="${wp-admin_name}" \
+--admin_password="${wp-admin_password}" --admin_email="shaunclarke43@gmail.com"
+
+# restarting apache web server
+sudo service httpd restart;
 }
 
 # calling funcrion
