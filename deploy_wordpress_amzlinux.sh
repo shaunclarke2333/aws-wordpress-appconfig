@@ -44,7 +44,7 @@ sudo wget https://wordpress.org/latest.tar.gz;
 sudo tar -xzf latest.tar.gz;
 
 # changing to aws-wordpress-directory
-cd /aws-wordpress-appconfig/;
+cd aws-wordpress-appconfig/;
 
 touch dr.txt;
 
