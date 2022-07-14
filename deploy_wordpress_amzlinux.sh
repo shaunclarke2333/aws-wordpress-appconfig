@@ -3,9 +3,6 @@
 # using a function so that commands will work when executed in sub shell
 function deploy_wordpress() {
 
-# aws region environment variable for aws cli
-export AWS_DEFAULT_REGION=us-east-1;
-
 # installing jq to parse json output returned from aws cli queries
 sudo yum install -y jq;
 
