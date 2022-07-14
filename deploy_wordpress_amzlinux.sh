@@ -3,9 +3,6 @@
 # using a function so that commands will work when executed in sub shell
 function deploy_wordpress() {
 
-# aws region environment variable for aws cli
-export AWS_DEFAULT_REGION=us-east-1;
-
 # installing jq to parse json output returned from aws cli queries
 sudo yum install -y jq;
 
@@ -100,7 +97,7 @@ sudo service httpd restart;
 # changing to opt directory
 cd ../opt;
 
-# download wordpress cli installer
+# download wordpress cli installer.
 sudo curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar;
 
 # changing permissions to make file executable
