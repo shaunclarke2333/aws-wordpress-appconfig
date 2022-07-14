@@ -100,7 +100,7 @@ sudo service httpd restart;
 # changing to opt directory
 cd ../opt;
 
-# download wordpress cli installer
+# download wordpress cli installer.
 sudo curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar;
 
 # changing permissions to make file executable
