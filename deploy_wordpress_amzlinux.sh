@@ -13,13 +13,13 @@ sudo yum install -y jq;
 password=$(aws secretsmanager get-secret-value --secret-id main-rds-password --query 'SecretString' --output text | jq .password | tr -d '"')
 
 # Getting rds username from rds instance and assigning to username variable
-username=$(aws rds describe-db-instances --db-instance-identifier wordpress-1 --query DBInstances[0] --output json | jq .MasterUsername | tr -d '"')
+username=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .MasterUsername | tr -d '"')
 
 # Getting rds database name from rds instance and assigning to database_name variable
-database_name=$(aws rds describe-db-instances --db-instance-identifier wordpress-1 --query DBInstances[0] --output json | jq .DBName | tr -d '"')
+database_name=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .DBName | tr -d '"')
 
 # Getting rds endpoint from db instance and assigning to password variable
-db_host=$(aws rds describe-db-instances --db-instance-identifier wordpress-1 --query DBInstances[0] --output json | jq .Endpoint.Address | tr -d '"')
+db_host=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .Endpoint.Address | tr -d '"')
 
 # Getting wordpress keys and salts auth_key from secrets manager and assigning to variable
 auth_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .authkey | tr -d '"')
@@ -113,11 +113,11 @@ sudo mv wp-cli.phar /usr/local/bin/wp;
 cd ../wordpress;
 
 #Getting wordpress admin username and password from secrets manager
-wp-admin-name=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .name | tr -d '"')
-wp-admin-password=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .password | tr -d '"')
+adminname=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .name | tr -d '"')
+adminpassword=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .password | tr -d '"')
 
 # Using wordpress CLI command to install wordpress and complete setup
-wp core install --url="wordpress.shaunsawslab.link" --title="Shauns terraform automated deployment" --admin_user="${wp-admin-name}" --admin_password="${wp-admin-password}" --admin_email="shaunclarke33@gmail.com" --allow-root
+wp core install --url="wordpress.shaunsawslab.link" --title="Shauns terraform automated deployment" --admin_user=$adminname --admin_password=$adminpassword --admin_email="shaunclarke43@gmail.com" --allow-root
 
 # restarting apache web server
 sudo service httpd restart;
