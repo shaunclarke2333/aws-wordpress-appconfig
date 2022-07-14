@@ -113,11 +113,11 @@ sudo mv wp-cli.phar /usr/local/bin/wp;
 cd ../wordpress;
 
 #Getting wordpress admin username and password from secrets manager
-wp-admin_name=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .name | tr -d '"')
-wp-admin_password=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .password | tr -d '"')
+wp-admin-name=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .name | tr -d '"')
+wp-admin-password=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .password | tr -d '"')
 
 # Using wordpress CLI command to install wordpress and complete setup
-wp core install --url="wordpress.shaunsawslab.link" --title="Shauns terraform automated deployment" --admin_user="${wp-admin_name}" --admin_password="${wp-admin_password}" --admin_email="shaunclarke43@gmail.com" --allow-root
+wp core install --url="wordpress.shaunsawslab.link" --title="Shauns terraform automated deployment" --admin_user="${wp-admin-name}" --admin_password="${wp-admin-password}" --admin_email="shaunclarke33@gmail.com" --allow-root
 
 # restarting apache web server
 sudo service httpd restart;
