@@ -13,13 +13,13 @@ sudo yum install -y jq;
 password=$(aws secretsmanager get-secret-value --secret-id main-rds-password --query 'SecretString' --output text | jq .password | tr -d '"')
 
 # Getting rds username from rds instance and assigning to username variable
-username=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .MasterUsername | tr -d '"')
+username=$(aws rds describe-db-instances --db-instance-identifier wordpress-1 --query DBInstances[0] --output json | jq .MasterUsername | tr -d '"')
 
 # Getting rds database name from rds instance and assigning to database_name variable
-database_name=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .DBName | tr -d '"')
+database_name=$(aws rds describe-db-instances --db-instance-identifier wordpress-1 --query DBInstances[0] --output json | jq .DBName | tr -d '"')
 
 # Getting rds endpoint from db instance and assigning to password variable
-db_host=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .Endpoint.Address | tr -d '"')
+db_host=$(aws rds describe-db-instances --db-instance-identifier wordpress-1 --query DBInstances[0] --output json | jq .Endpoint.Address | tr -d '"')
 
 # Getting wordpress keys and salts auth_key from secrets manager and assigning to variable
 auth_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .authkey | tr -d '"')
@@ -116,8 +116,10 @@ cd ../wordpress;
 wp-admin_name=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .name | tr -d '"')
 wp-admin_password=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .password | tr -d '"')
 
-# Using wordpress CLI command to install wordpress and complete setup
-wp core install --url="" --title="Shauns terraform automated deployment" --admin_user="shaun" --admin_password="Nothin23" --admin_email="shaunclarke43@gmail.com" --allow-root
+# Using wordpress CLI command to user info into database and complete setup
+wp user create shaun shaunclarke43@gmail.com --role=administrator
+
+wp user update 1 --display-name="${wp-admin-name}" --user_pass="${wp-admin-password}" 
 
 # restarting apache web server
 sudo service httpd restart;
