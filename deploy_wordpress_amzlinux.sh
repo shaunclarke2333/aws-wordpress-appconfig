@@ -6,17 +6,20 @@ function deploy_wordpress() {
 # installing jq to parse json output returned from aws cli queries
 sudo yum install -y jq;
 
+#variable for wordpress DB identifier
+wordpress_db_identifier="wordpress-env_name_here";
+
 # Getting rds password from secrets manager and assigning to password variable
 password=$(aws secretsmanager get-secret-value --secret-id main-rds-password --query 'SecretString' --output text | jq .password | tr -d '"')
 
 # Getting rds username from rds instance and assigning to username variable
-username=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .MasterUsername | tr -d '"')
+username=$(aws rds describe-db-instances --db-instance-identifier ${wordpress_db_identifier} --query DBInstances[0] --output json | jq .MasterUsername | tr -d '"')
 
 # Getting rds database name from rds instance and assigning to database_name variable
-database_name=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .DBName | tr -d '"')
+database_name=$(aws rds describe-db-instances --db-instance-identifier ${wordpress_db_identifier} --query DBInstances[0] --output json | jq .DBName | tr -d '"')
 
 # Getting rds endpoint from db instance and assigning to password variable
-db_host=$(aws rds describe-db-instances --db-instance-identifier wordpress --query DBInstances[0] --output json | jq .Endpoint.Address | tr -d '"')
+db_host=$(aws rds describe-db-instances --db-instance-identifier ${wordpress_db_identifier} --query DBInstances[0] --output json | jq .Endpoint.Address | tr -d '"')
 
 # Getting wordpress keys and salts auth_key from secrets manager and assigning to variable
 auth_key=$(aws secretsmanager get-secret-value --secret-id keys --query 'SecretString' --output text | jq .authkey | tr -d '"')
