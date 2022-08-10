@@ -7,7 +7,7 @@ function deploy_wordpress() {
 sudo yum install -y jq;
 
 #variable for wordpress DB identifier
-wordpress_db_identifier="wordpress-env_name_here";
+wordpress_db_identifier="env_name_herewordpress";
 
 # Getting rds password from secrets manager and assigning to password variable
 password=$(aws secretsmanager get-secret-value --secret-id main-rds-password --query 'SecretString' --output text | jq .password | tr -d '"')
