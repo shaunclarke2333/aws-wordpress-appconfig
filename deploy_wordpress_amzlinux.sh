@@ -62,6 +62,10 @@ sudo tar -xzf latest.tar.gz;
 # changing to aws-wordpress-directory
 cd aws-wordpress-appconfig/;
 
+sudo su;
+
+echo ${wordpress_url} > test.text
+
 # passing database name to config file
 sudo sed -i "s/database_name_here/${database_name}/g" wp-config.php;
 
@@ -121,7 +125,6 @@ adminpassword=$(aws secretsmanager get-secret-value --secret-id wp-admin-passwor
 # Using wordpress CLI command to install wordpress and complete setup
 wp core install --url=$wordpress_url --title="Shauns terraform automated deployment" --admin_user=$adminname --admin_password=$adminpassword --admin_email="shaunclarke43@gmail.com" --allow-root
 
-export testit=$wordpress_url;
 
 # restarting apache web server
 sudo service httpd restart;
