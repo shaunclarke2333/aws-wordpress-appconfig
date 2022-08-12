@@ -9,7 +9,7 @@ sudo yum install -y jq;
 #variable for wordpress DB identifier
 wordpress_db_identifier="env_name_herewordpress";
 
-wordpress_url="domain_name_here"
+wordpress_url="domain_name_here";
 
 # Getting rds password from secrets manager and assigning to password variable
 password=$(aws secretsmanager get-secret-value --secret-id main-rds-password --query 'SecretString' --output text | jq .password | tr -d '"')
@@ -74,6 +74,12 @@ sudo sed -i "s/password_here/${password}/g" wp-config.php;
 # passing endpoint to config file
 sudo sed -i "s/localhost/${db_host}/g" wp-config.php;
 
+# passing home url to config file
+sudo sed -i "s/my_home_url/${wordpress_url}/g" wp-config.php;
+
+# passing site url to config file
+sudo sed -i "s/my_site_url/${wordpress_url}/g" wp-config.php;
+
 # passing unique_keys_salts to config file
 sudo sed -i "s/auth_key/${auth_key}/" wp-config.php;
 sudo sed -i "s/key_secure/${secure_auth_key}/" wp-config.php;
@@ -119,7 +125,7 @@ adminname=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --
 adminpassword=$(aws secretsmanager get-secret-value --secret-id wp-admin-password --query 'SecretString' --output text | jq .password | tr -d '"')
 
 # Using wordpress CLI command to install wordpress and complete setup
-wp core install --url="dev-wordpress.shaunsawslab.link" --title="Shauns terraform automated deployment" --admin_user=$adminname --admin_password=$adminpassword --admin_email="shaunclarke43@gmail.com" --allow-root
+wp core install --url=$wordpress_url --title="Shauns terraform automated deployment" --admin_user=$adminname --admin_password=$adminpassword --admin_email="shaunclarke43@gmail.com" --allow-root
 
 # restarting apache web server
 sudo service httpd restart;
