@@ -125,5 +125,5 @@ wp core install --url="dev-wordpress.shaunsawslab.link" --title="Shauns terrafor
 sudo service httpd restart;
 }
 
-# calling funcrion
+# calling funcrion..
 deploy_wordpress
